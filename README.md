@@ -26,6 +26,16 @@ The plugin uses an HTML \<canvas\> element to dynamically generate banner images
    * The generated PNG is saved into this subfolder with a filename derived from the first word of your banner text and a timestamp (e.g., project\_1678886400000.png).
 5. **Insertion**: A Markdown link to the newly created banner image is inserted at your cursor's position in the active note.
 
+## **Preview**
+![Banner Preview](assets/banner_preview.png)
+*A sample banenr genreated with "⚡ Sample"*
+### Settings
+- Font Size: 185
+- Margin: 75
+- Font Familiy: Inter
+- Font Weight: 300
+- Icon Margin: 10
+
 ## **How to Use**
 
 1. Open a note in Obsidian.
