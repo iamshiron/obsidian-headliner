@@ -1,94 +1,59 @@
-# Obsidian Sample Plugin
+# **Obsidian Headliner**
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+A simple Obsidian plugin to generate custom banners and header images for your notes directly within your vault.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+✨ **Features:**
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+* Create banners from background images.
+* Add custom text and icons (emojis or images).
+* Customize fonts, colors, and styles.
+* Automatically organizes banners into folders based on your note titles.
 
-## First time developing plugins?
+## **How it Works**
 
-Quick starting guide for new plugin devs:
+The plugin uses an HTML \<canvas\> element to dynamically generate banner images. Here's a breakdown of the process:
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+1. **User Input**: When you run the "Generate Banner" command, a modal window appears asking for banner text, a background image, and an optional icon.
+2. **Image Loading**: The background and icon images are loaded into the browser. If you don't provide a custom icon, the default emoji from the settings is rendered onto a temporary canvas and used as an image.
+3. **Canvas Drawing**:
+   * A high-resolution (2x supersampled) canvas is created in memory.
+   * The background image is drawn onto the canvas. It's cropped vertically based on the "Banner Height" setting to ensure the banner has the correct dimensions.
+   * The icon (if any) and the banner text are drawn on top of the background.
+   * The canvas is then downscaled to its final size, which provides anti-aliasing for sharper text and graphics.
+4. **File Saving**:
+   * The final canvas content is converted into a PNG image.
+   * The plugin creates a subfolder within your specified "Output Directory" named after the current note's title (e.g., banners/my-cool-note/).
+   * The generated PNG is saved into this subfolder with a filename derived from the first word of your banner text and a timestamp (e.g., project\_1678886400000.png).
+5. **Insertion**: A Markdown link to the newly created banner image is inserted at your cursor's position in the active note.
 
-## Releasing new releases
+## **How to Use**
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+1. Open a note in Obsidian.
+2. Open the command palette (Ctrl/Cmd \+ P).
+3. Search for "Generate Banner" and run the command.
+4. Fill in the details in the modal:
+   * **Banner Text**: The text you want to display.
+   * **Reference Image**: The background image for your banner.
+   * **Icon (Optional)**: An image or SVG to place before the text.
+5. Click "Generate".
+6. The banner will be created and a link to it will be inserted into your note.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+## **Settings**
 
-## Adding your plugin to the community plugin list
+You can configure the default appearance of your banners in the plugin settings:
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+* **Output Directory**: The main folder where all banners will be saved.
+* **Font Size/Family/Weight/Color**: Customize the appearance of the banner text.
+* **Margin**: The space around the text and icon.
+* **Default Icon**: An emoji or character to use if no custom icon is provided.
+* **Icon Margin**: The space between the icon and the text.
+* **Banner Height**: The vertical position (as a percentage) from which to crop the background image.
+* **Enable/Color for Text Stroke**: Add an outline to the text for better visibility.
 
-## How to use
+## **Contributing**
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+Contributions are welcome\! If you have ideas for new features or have found a bug, please open an issue or submit a pull request on the GitHub repository.
 
-## Manually installing the plugin
+## **License**
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+This plugin is released under the MIT License.
